@@ -4,13 +4,11 @@ const categorySchema=new mongoose.Schema({
     name:{
         type:String,
         required:true,
-        unique:true,
-        trim:true
+        unique:true
     },
     description:{
         type:String,
-        required:true,
-        trim:true
+        required:true
     },
     pricePerNight:{
         type:String,
@@ -30,7 +28,10 @@ const categorySchema=new mongoose.Schema({
         type:Boolean,
         required:true,
         default:true
+    },
+    image:{
+        type:String
     }
-})
+});
 const Category=mongoose.model("categories",categorySchema);
 export default Category;
