@@ -1,6 +1,8 @@
 import Category from "../models/category.js";
 
 export function createCategory(req,res){
+    console.log("Request Headers:", req.headers);
+    console.log("Decoded User:", req.user);
     if(req.user==null)
     {
         res.status(401).json({
