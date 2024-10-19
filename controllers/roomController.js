@@ -24,24 +24,22 @@ const newRoom=new Room(req.body)
         });
     });
 }
-// Get rooms by category (Common for admin and customers)
-export function getRoomsByCategory(req, res) {
-    const category = req.params.category;
+// Get a room by room number (Common for admin and customers)
+export function searchRoomByNumber(req, res) {
+    const roomNumber = req.params.number; 
 
-    Room.find({ category: category })
-        .then((result) => {
-            if (result.length === 0) {
-                return res.status(404).json({
-                    message: "No rooms found in this category"
-                });
+    Room.findOne({ roomNumber: roomNumber })
+        .then((room) => {
+            if (!room) {
+                return res.status(404).json({ message: "Room not found" });
             }
             res.status(200).json({
-                rooms: result
+                room: room
             });
         })
         .catch((err) => {
             res.status(500).json({
-                message: "Failed to get rooms",
+                message: "Failed to retrieve room",
                 error: err.message
             });
         });
@@ -57,8 +55,7 @@ export function updateRoom(req, res) {
 
     const roomNumber = req.params.number; 
 
-    Room.updateOne({ number: roomNumber }, req.body)
-        .then((updateResult) => {
+    Room.updateOne({ roomNumber: roomNumber }, { status: "underMaintenance" }).then((updateResult) => {
             if (updateResult.modifiedCount === 0) {
                 return res.status(404).json({ message: "Room not found or no changes made" });
             }
@@ -81,10 +78,9 @@ export function deleteRoom(req, res) {
         });
     }
 
-    const roomNumber = req.params.number; // Assuming you are deleting by room number
+    const roomNumber = req.params.number;
 
-    Room.findOneAndDelete({ number: roomNumber })
-        .then((deletedRoom) => {
+    Room.findOneAndDelete({ roomNumber: roomNumber }).then((deletedRoom) => {
             if (!deletedRoom) {
                 return res.status(404).json({ message: "Room not found" });
             }

@@ -1,69 +1,93 @@
-import Feedback from '../models/feedback.js';
-import { isAdminValid } from './userControllers.js'; 
+import Feedback from "../models/feedback.js";
+import { isAdminValid } from "./userControllers.js";
 
-// Create new feedback (coomon for both admins and customers)
+// Create a new feedback
 export function createFeedback(req, res) {
-    const newFeedback = new Feedback(req.body);
+    const { user, rating, comment } = req.body;
+
+    const newFeedback = new Feedback({ user, rating, comment });
 
     newFeedback.save().then((result) => {
-            res.status(201).json({
-                message: "Feedback created successfully",
-                feedback: result
-            });
-        })
-        .catch((err) => {
-            res.status(500).json({
-                message: "Feedback creation failed",
-                error: err.message
-            });
+        res.status(201).json({
+            message: "Feedback created successfully",
+            result: result
         });
+    })
+    .catch((err) => {
+        res.status(500).json({
+            message: "Feedback creation failed",
+            error: err.message
+        });
+    });
 }
 
-// Get all approved feedback (Admin only)
-export function getAllApprovedFeedback(req, res) {
-    Feedback.find({ isApproved: true }).then((feedbacks) => {
-            res.status(200).json({
-                feedbacks
-            });
-        })
-        .catch((err) => {
-            res.status(500).json({
-                message: "Failed to retrieve feedbacks",
-                error: err.message
-            });
-        });
-}
-
-// Update feedback status (Admin only)
-export function updateFeedbackStatus(req, res) {
+// Get all feedbacks (Admin only)
+export function getAllFeedbacks(req, res) {
     if (!isAdminValid(req)) {
         return res.status(403).json({
             message: "Unauthorized"
         });
     }
 
-    const feedbackId = req.params.feedbackId; 
-    const { isApproved } = req.body; 
-
-    Feedback.findByIdAndUpdate(feedbackId, { isApproved }, { new: true })
-        .then((updatedFeedback) => {
-            if (!updatedFeedback) {
-                return res.status(404).json({ message: "Feedback not found" });
-            }
-            res.status(200).json({
-                message: "Feedback status updated successfully",
-                feedback: updatedFeedback
-            });
-        })
-        .catch((err) => {
-            res.status(500).json({
-                message: "Failed to update feedback status",
-                error: err.message
-            });
+    Feedback.find().populate("user", "firstName lastName email").then((feedbacks) => {
+        res.status(200).json(feedbacks);
+    })
+    .catch((err) => {
+        res.status(500).json({
+            message: "Failed to retrieve feedbacks",
+            error: err.message
         });
+    });
 }
 
-// Delete feedback (Admin only)
+// Get feedback by ID
+export function getFeedbackById(req, res) {
+    const feedbackId = req.params.id;
+
+    Feedback.findById(feedbackId).populate("user", "firstName lastName email").then((feedback) => {
+        if (!feedback) {
+            return res.status(404).json({ message: "Feedback not found" });
+        }
+        res.status(200).json(feedback);
+    })
+    .catch((err) => {
+        res.status(500).json({
+            message: "Failed to retrieve feedback",
+            error: err.message
+        });
+    });
+}
+
+// Update feedback response (Admin only)
+export function updateFeedbackResponse(req, res) {
+    if (!isAdminValid(req)) {
+        return res.status(403).json({
+            message: "Unauthorized"
+        });
+    }
+
+    const feedbackId = req.params.id;
+    const { response, isApproved } = req.body;
+
+    Feedback.findByIdAndUpdate(feedbackId, { response, responseDate: new Date(), isApproved }, { new: true })
+    .then((updatedFeedback) => {
+        if (!updatedFeedback) {
+            return res.status(404).json({ message: "Feedback not found" });
+        }
+        res.status(200).json({
+            message: "Feedback response updated successfully",
+            updatedFeedback
+        });
+    })
+    .catch((err) => {
+        res.status(500).json({
+            message: "Failed to update feedback",
+            error: err.message
+        });
+    });
+}
+
+// Delete a feedback (Admin only)
 export function deleteFeedback(req, res) {
     if (!isAdminValid(req)) {
         return res.status(403).json({
@@ -71,19 +95,35 @@ export function deleteFeedback(req, res) {
         });
     }
 
-    const feedbackId = req.params.feedbackId; 
+    const feedbackId = req.params.id;
 
-    Feedback.findByIdAndDelete(feedbackId)
-        .then((deletedFeedback) => {
-            if (!deletedFeedback) {
-                return res.status(404).json({ message: "Feedback not found" });
-            }
-            res.status(200).json({ message: "Feedback deleted successfully" });
-        })
-        .catch((err) => {
-            res.status(500).json({
-                message: "Failed to delete feedback",
-                error: err.message
-            });
+    Feedback.findByIdAndDelete(feedbackId).then((deletedFeedback) => {
+        if (!deletedFeedback) {
+            return res.status(404).json({ message: "Feedback not found" });
+        }
+        res.status(200).json({ message: "Feedback deleted successfully" });
+    })
+    .catch((err) => {
+        res.status(500).json({
+            message: "Failed to delete feedback",
+            error: err.message
         });
+    });
+}
+
+// Get all approved feedbacks (to be displayed on the front end)
+export function getApprovedFeedbacks(req, res) {
+    const minimumRating = 4; // Optional: define minimum rating for "good" feedback if needed
+
+    Feedback.find({ isApproved: true, rating: { $gte: minimumRating } })
+    .populate("user", "firstName lastName email")
+    .then((approvedFeedbacks) => {
+        res.status(200).json(approvedFeedbacks);
+    })
+    .catch((err) => {
+        res.status(500).json({
+            message: "Failed to retrieve approved feedbacks",
+            error: err.message
+        });
+    });
 }

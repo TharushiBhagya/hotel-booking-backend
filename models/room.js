@@ -17,10 +17,11 @@ const roomSchema=new mongoose.Schema({
         default:3,
         min:1
     },
-    isAvailable:{
-        type:Boolean,
-        required:true,
-        default:true
+    status: {
+        type: String,
+        enum: ["available", "underMaintenance", "unavailable"],
+        required: true,
+        default: "available" 
     },
     photos:[
         {
@@ -30,10 +31,6 @@ const roomSchema=new mongoose.Schema({
     specialDescription:{
         type:String,
         default:""
-    },
-    isUnderMaintenance: {
-        type: Boolean, 
-        default: true
     },
     notes:{
         type:String,

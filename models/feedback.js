@@ -1,14 +1,10 @@
 import mongoose from "mongoose";
 
 const feedbackSchema=new mongoose.Schema({
-    guestName: {
-        type: String,
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
         required: true
-    },
-    guestEmail: {
-        type: String,
-        required: true,
-        match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
     },
     rating:{
         type: Number,

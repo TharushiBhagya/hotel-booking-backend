@@ -1,12 +1,13 @@
-import express from 'express';
-import {createFeedback, getAllApprovedFeedback, updateFeedbackStatus, deleteFeedback} from '../controllers/feedbackController.js';
-import { authenticateToken } from '../middleware/authenticateToken.js'; 
+import express from "express";
+import {createFeedback, getAllFeedbacks, getFeedbackById, updateFeedbackResponse, deleteFeedback, getApprovedFeedbacks} from "../controllers/feedbackController.js";
 
 const feedbackRouter = express.Router();
 
 feedbackRouter.post("/", createFeedback);
-feedbackRouter.get("/approved", authenticateToken, getAllApprovedFeedback);
-feedbackRouter.put("/:feedbackId/status", authenticateToken, updateFeedbackStatus);
-feedbackRouter.delete("/:feedbackId", authenticateToken, deleteFeedback);
+feedbackRouter.get("/", getAllFeedbacks);
+feedbackRouter.get("/:id", getFeedbackById);
+feedbackRouter.put("/:id", updateFeedbackResponse);
+feedbackRouter.delete("/:id", deleteFeedback);
+feedbackRouter.get("/approved/list", getApprovedFeedbacks);
 
 export default feedbackRouter;
