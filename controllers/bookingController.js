@@ -1,5 +1,5 @@
 import Booking from "../models/booking.js";
-import { isAdminValid } from "./userControllers.js"; 
+import { isAdminValid } from "./userController.js"; 
 
 // Create a new booking (Coomon for both admins and customers)
 export function createBooking(req, res) {
