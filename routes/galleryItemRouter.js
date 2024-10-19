@@ -4,7 +4,7 @@ import { authenticateToken } from "../middleware/authenticateToken.js";
 
 const galleryItemRouter = express.Router();
 
-galleryItemRouter.post('/', createGalleryItem);
-galleryItemRouter.get('/',authenticateToken,getGalleryItems);
+galleryItemRouter.post('/', authenticateToken, createGalleryItem);
+galleryItemRouter.get('/', getGalleryItems);
 
 export default galleryItemRouter;

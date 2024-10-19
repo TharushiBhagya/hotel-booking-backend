@@ -26,8 +26,7 @@ export function createGalleryItem(req, res) {
 }
 
 export function getGalleryItems(req, res) {
-    GalleryItem.find()
-        .then((list) => {
+    GalleryItem.find().then((list) => {
             res.json({
                 list: list
             });
