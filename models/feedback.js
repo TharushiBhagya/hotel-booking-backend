@@ -1,4 +1,3 @@
-import { response } from "express";
 import mongoose from "mongoose";
 
 const feedbackSchema=new mongoose.Schema({
@@ -8,7 +7,8 @@ const feedbackSchema=new mongoose.Schema({
     },
     guestEmail: {
         type: String,
-        required: true
+        required: true,
+        match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/
     },
     rating:{
         type: Number,
@@ -18,7 +18,8 @@ const feedbackSchema=new mongoose.Schema({
     },
     comment:{
         type: String,
-        required: true
+        required: true,
+        maxlength: 500
     },
     feedbackDate: {
         type: Date,
