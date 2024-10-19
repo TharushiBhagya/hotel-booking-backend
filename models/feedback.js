@@ -30,6 +30,10 @@ const feedbackSchema=new mongoose.Schema({
     },
     responseDate:{
         type:Date
+    },
+    isApproved: {  
+        type: Boolean,
+        default: false  
     }
 });
 const Feedback=mongoose.model("feedbacks",feedbackSchema);
