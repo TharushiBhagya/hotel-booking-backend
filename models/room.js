@@ -7,7 +7,8 @@ const roomSchema=new mongoose.Schema({
         unique:true
     },
     category:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
+        enum:["Standard","Deluxe","Luxury"],
         required:true
     },
     maxGuests:{
@@ -29,6 +30,10 @@ const roomSchema=new mongoose.Schema({
     specialDescription:{
         type:String,
         default:""
+    },
+    isUnderMaintenance: {
+        type: Boolean, 
+        default: true
     },
     notes:{
         type:String,

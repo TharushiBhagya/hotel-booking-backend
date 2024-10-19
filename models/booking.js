@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import Category from "./category";
 
 const bookingSchema=new mongoose.Schema({
       room:{
@@ -7,7 +6,7 @@ const bookingSchema=new mongoose.Schema({
         ref:"Room",
         required:true
       },
-      Category:{
+      category:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Category",
         required:true

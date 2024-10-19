@@ -20,7 +20,7 @@ const newCategory=new Category(req.body)
     }).catch((err)=>{
         res.status(500).json({
             message:"Category creation failed",
-            error:err
+            error:err.message
         });
     });
 }
