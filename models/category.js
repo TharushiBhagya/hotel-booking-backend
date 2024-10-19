@@ -4,21 +4,17 @@ const categorySchema=new mongoose.Schema({
     name:{
         type:String,
         required:true,
-        unique:true
+        unique:true,
+        trim: true
     },
     description:{
         type:String,
         required:true
     },
     pricePerNight:{
-        type:String,
-        required:true,
-        min:0
-    },
-    maxOccupancy:{
         type:Number,
         required:true,
-        min:1
+        min:0
     },
     amenities:{
         type:[String],
