@@ -40,8 +40,14 @@ export function getAllInquiries(req, res) {
         });
 }
 
-// Get an inquiry by ID
+// Get an inquiry by ID (Admin only)
 export function getInquiryById(req, res) {
+    if (!isAdminValid(req)) {  // Check if the user is an admin
+        return res.status(403).json({
+            message: "Unauthorized"
+        });
+    }
+
     const inquiryId = req.params.id;
 
     Inquiry.findById(inquiryId).populate("user", "firstName lastName email")
