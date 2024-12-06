@@ -1,23 +1,39 @@
 import Booking from "../models/booking.js";
-import { isAdminValid } from "./userController.js"; 
+import { isAdminValid, isCustomerValid } from "./userController.js"; 
 
 // Create a new booking (Coomon for both admins and customers)
 export function createBooking(req, res) {
-    const newBooking = new Booking(req.body);
+    if(!isCustomerValid(req)){
+        res.status(403).json({
+            message:"Forbidden"
+        })
+        return
+    }
 
-    newBooking.save()
+    const startingId=1200;
+
+    Booking.countDocuments({}).then((count)=>{
+        const newId="INV"+startingId+count+1;
+        const newBooking = new Booking({
+            bookingId:newId,
+            roomId:req.body.roomId,
+            email:req.user.email,
+            start:req.user.start,
+            end:req.user.end
+        });
+        newBooking.save()
         .then((result) => {
             res.status(201).json({
                 message: "Booking created successfully",
                 booking: result
             });
-        })
-        .catch((err) => {
+        }).catch((err) => {
             res.status(500).json({
                 message: "Booking creation failed",
                 error: err.message
-            });
-        });
+            })
+        })
+    })   
 }
 
 // Get all bookings (Admin only)
@@ -25,7 +41,7 @@ export function getAllBookings(req, res) {
     if (!isAdminValid(req)) {
         return res.status(403).json({
             message: "Unauthorized"
-        });
+        })
     }
 
     Booking.find().populate("room")
